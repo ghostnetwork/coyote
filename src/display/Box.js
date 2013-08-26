@@ -13,9 +13,12 @@
       get fillStyle(){return _fillStyle;}
     };
 
-    that.moveTo = function(graphics, point) {
+    that.moveTo = function(graphics, point, doRender) {
       _bounds.moveTo(point);
-      that.render(graphics);
+      var shouldRender = (existy(doRender) && doRender);
+      if (shouldRender)
+        that.render(graphics);
+      return that;
     };
 
     that.render = function(graphics) {
@@ -26,6 +29,7 @@
       graphics.context.save();
       drawBorder(graphics);
       graphics.context.restore();
+      return that;
     };
 
     function drawBorder(graphics) {

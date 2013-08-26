@@ -1,0 +1,20 @@
+{
+  "name": "coyote",
+  "version": "0.1.0",
+  "description": "minimalist JavaScript canvas 2D micro-framework",
+  "main": "index.js",
+  "engines": { "node": ">= 0.6.0" },
+  "scripts": { "test": "mocha --recursive test" },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ghostnetwork/coyote.git"
+  },
+  "dependencies": { "underscore": "1.4.4" },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "1.2.2",
+    "util": "0.4.9"
+  },
+  "author": "@codeswimmer",
+  "license": "MIT"
+}
