@@ -30,6 +30,8 @@
     </style>
 
     <script type="text/javascript" src="src/event/EventDispatcher.js"></script>
+    <script type="text/javascript" src="src/geometry/Size.js"></script>
+    <script type="text/javascript" src="src/geometry/Point.js"></script>
     <script type="text/javascript" src="src/geometry/Rectangle.js"></script>
     <script type="text/javascript" src="src/tools/Pulse.js"></script>
     <script type="text/javascript" src="src/display/Graphics.js"></script>
@@ -41,11 +43,19 @@
       var graphics;
 
       function initialize() {
-        fullsizeCanvas = FullsizeCanvas.create().initialize(testFullSizeCanvasDrawing);
+        // fullsizeCanvas = FullsizeCanvas.create().initialize(testFullSizeCanvasDrawing);
+        fullsizeCanvas = FullsizeCanvas.create().initialize();
 
         testGraphics();
         testEventDispatcher();
         testPulse();
+        testBox();
+        testSize();
+      }
+
+      function testGraphics() {
+        var canvas = document.getElementById('canvas');
+        graphics = fullsizeCanvas.graphics;
       }
 
       function testFullSizeCanvasDrawing() {
@@ -97,7 +107,7 @@
       function testPulse() {
         var pulse = new Pulse();
         pulse.addPulseEventListener(function() {
-          fullsizeCanvas.render();
+          fullsizeCanvas.refresh();
         });
 
         var period = 100;
@@ -107,9 +117,19 @@
           pulse.stop();
         }, period * numTimes);
       }
-      function testGraphics() {
-        var canvas = document.getElementById('canvas');
-        graphics = fullsizeCanvas.graphics;
+
+      function testBox() {
+        // var bounds = new Rectangle(25,100,100,100);
+        var bounds = new Rectangle(10,50,100,100);
+        var fillStyle = '#774422';
+        var box = new Box(bounds, fillStyle);
+        fullsizeCanvas.addChild(box);
+      }
+
+      function testSize() {
+        var bounds = new Rectangle(25,400,100,100);
+        var size = bounds.size;
+        console.log('size: ' + size);
       }
      </script>
 

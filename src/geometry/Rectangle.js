@@ -13,9 +13,24 @@
       get x(){return _x;},
       get y(){return _y;},
       get width(){return _width;},
-      get height(){return _height;}
+      get height(){return _height;},
+      get size(){return new Size(_width, _height);}
     }
-    
+
+    that.moveTo = function(point) {
+      _x = point.x;
+      _y = point.y;
+    };
+
+    that.contains = function(point) {
+      var okX = (point.x >= _x && point.x <= _x + _width)
+      var okY = (point.y >= that.y && point.y <= _y + _height);
+      var result = okX && okY;
+      return result;
+    }
+
+    that.toString = function() {return _x + ', ' + _y + ', ' + _width + ', ' + _height};
+
     return that;
   };
   
