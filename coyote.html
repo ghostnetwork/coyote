@@ -30,33 +30,86 @@
     </style>
 
     <script type="text/javascript" src="src/event/EventDispatcher.js"></script>
-    <script type="text/javascript" src="src/display/FullsizeCanvas.js"></script>
+    <script type="text/javascript" src="src/geometry/Rectangle.js"></script>
     <script type="text/javascript" src="src/tools/Pulse.js"></script>
+    <script type="text/javascript" src="src/display/Graphics.js"></script>
+    <script type="text/javascript" src="src/display/FullsizeCanvas.js"></script>
+    <script type="text/javascript" src="src/display/Box.js"></script>
 
     <script type="text/javascript">
-      function initialize() {
-        var canvas = document.getElementById('canvas');
-        var fullsizeCanvas = FullsizeCanvas.create().initialize(function() {
-          console.log('rendering...');
-        });
+      var fullsizeCanvas;
+      var graphics;
 
+      function initialize() {
+        fullsizeCanvas = FullsizeCanvas.create().initialize(testFullSizeCanvasDrawing);
+
+        testGraphics();
+        testEventDispatcher();
+        testPulse();
+      }
+
+      function testFullSizeCanvasDrawing() {
+        if (graphics) {
+          var ctx = graphics.context;
+          ctx.strokeStyle = "#FFA500";
+
+          //-----------------------------------------------------------------------------
+          var lingrad = ctx.createLinearGradient(0,0,0,150);
+          lingrad.addColorStop(0, '#00ABEB');
+          lingrad.addColorStop(0.5, '#fff');
+          lingrad.addColorStop(0.5, '#26C000');
+          lingrad.addColorStop(1, '#fff');
+          //-----------------------------------------------------------------------------
+
+          graphics.drawFilledRect(new Rectangle(25,25,100,100), lingrad);
+          graphics.clearRect(new Rectangle(45,45,60,60));
+          graphics.strokeRect(new Rectangle(50,50,50,50));
+
+          roundedRect(ctx, 200, 25, 200, 200, 10);
+
+          graphics.drawFilledRect(new Rectangle(25,200,100,100), '#774499');
+        }
+      }
+
+      function roundedRect(ctx,x,y,width,height,radius){
+        ctx.beginPath();
+        ctx.moveTo(x,y+radius);
+        ctx.lineTo(x,y+height-radius);
+        ctx.quadraticCurveTo(x,y+height,x+radius,y+height);
+        ctx.lineTo(x+width-radius,y+height);
+        ctx.quadraticCurveTo(x+width,y+height,x+width,y+height-radius);
+        ctx.lineTo(x+width,y+radius);
+        ctx.quadraticCurveTo(x+width,y,x+width-radius,y);
+        ctx.lineTo(x+radius,y);
+        ctx.quadraticCurveTo(x,y,x,y+radius);
+        ctx.stroke();
+      }
+
+      function testEventDispatcher() {
         var emitter = new EventDispatcher();
         var listener = function(event) {console.log('event: ' + event);};
         emitter.addEventListener('click', listener);
         emitter.emit('click', 'cluck');
         emitter.removeEventListener('click', listener);
         emitter.emit('click', 'cluck');
+      }
 
+      function testPulse() {
         var pulse = new Pulse();
         pulse.addPulseEventListener(function() {
-          console.log('received pulse event');
           fullsizeCanvas.render();
         });
 
-        pulse.start(1000);
+        var period = 100;
+        var numTimes = 4;
+        pulse.start(period);
         setTimeout(function() {
           pulse.stop();
-        }, 4000);
+        }, period * numTimes);
+      }
+      function testGraphics() {
+        var canvas = document.getElementById('canvas');
+        graphics = fullsizeCanvas.graphics;
       }
      </script>
 

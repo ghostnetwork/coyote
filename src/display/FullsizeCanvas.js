@@ -8,8 +8,8 @@
     that.initialize = function(renderer) {
       that.render = renderer;
 
-      var canvas = document.getElementById('canvas'),
-          context = canvas.getContext('2d');
+      var canvas = document.getElementById('canvas');
+      var _graphics = new Graphics(canvas);
 
       // resize the canvas to fill browser window dynamically
       window.addEventListener('resize', resizeCanvas, false);
@@ -28,9 +28,14 @@
 
       function drawStuff() {
         // do your drawing stuff here
-        console.log('invoking render');
         that.render();
       }
+
+      Object.defineProperty(that, 'graphics', {
+        get : function() {return _graphics;},
+        enumerable : true
+      });
+
       return that; // provides chaining
     }
 
