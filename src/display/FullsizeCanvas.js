@@ -1,6 +1,18 @@
 (function(exports){
   'use strict';
 
+  var _
+    , EventDispatcher;
+
+  if (require != null) {
+    require('verdoux');
+
+    if (isNotRunningInBrowser()) { 
+      _ = require('underscore');
+      EventDispatcher = require('../event/EventDispatcher');
+    }
+  }
+
   exports.create = function() { 
     this.prototype = Function.prototype;
     var that = EventDispatcher.create()
@@ -13,10 +25,13 @@
       , offset;
 
     that.addChild = function(child) {
+      if (notExisty(child)) throw new Error('child must be existy');
       displayList.push(child);
+      return that;
     };
 
     that.removeChild = function(child) {
+      // if (notExisty(child)) throw new Error('child must be existy');
       var index = displayList.indexOf(child);
       if (index >= 0) displayList.splice(index, 1);
     };
@@ -94,12 +109,17 @@
       get : function() {return graphics;},
       enumerable : true
     });
+
+    Object.defineProperty(that, 'childCount', {
+      get : function() {return displayList.length;},
+      enumerable : true
+    });
+
     return that;
   };
 
-  
   // pseudo-static functions look like this:
-  exports.test = function(arg){return arg;};
+  //exports.test = function(arg){return arg;};
 
 })(typeof exports === 'undefined'
   ? this.FullsizeCanvas = function(){

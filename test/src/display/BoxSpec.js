@@ -23,6 +23,6 @@ describe('Box', function(){
   });
 
   it('should be able to be created', function(){
-    assert(box !== null);
+    assert(existy(box));
   });
 });
