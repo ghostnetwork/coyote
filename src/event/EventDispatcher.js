@@ -1,12 +1,10 @@
+var _, util;
 
 (function(exports){
 
   'use strict';
 
-  var _
-    , util;
-
-  if (require != null) {
+  if (typeof require !== 'undefined') {
     require('verdoux');
 
     if (isNotRunningInBrowser()) { 

@@ -1,11 +1,12 @@
+var _, EventDispatcher;
+
 (function(exports){
   'use strict';
 
-  var _
-    , EventDispatcher;
-
-  if (require != null) {
+  if (typeof require !== 'undefined') {
     require('verdoux');
+
+    // 
 
     if (isNotRunningInBrowser()) { 
       _ = require('underscore');
