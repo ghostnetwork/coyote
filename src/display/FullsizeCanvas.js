@@ -1,29 +1,18 @@
-var _, EventDispatcher;
+var _, DragDrop, EventDispatcher;
+
+if (typeof module === 'undefined')
+  var module = {"exports":{}};
 
 (function(exports){
   'use strict';
 
-  if (typeof require !== 'undefined') {
-    require('verdoux');
-
-    // 
-
-    if (isNotRunningInBrowser()) { 
-      _ = require('underscore');
-      EventDispatcher = require('../event/EventDispatcher');
-    }
-  }
-
-  exports.create = function() { 
+  var FullsizeCanvas = function() {
     this.prototype = Function.prototype;
     var that = EventDispatcher.create()
       , canvas
       , displayList = []
-      , dragStart
-      , dragTarget
-      , graphics
-      , isDragging = false
-      , offset;
+      , dragDrop = DragDrop.create()
+      , graphics;
 
     that.addChild = function(child) {
       if (notExisty(child)) throw new Error('child must be existy');
@@ -66,32 +55,21 @@ var _, EventDispatcher;
     };
 
     function configureMouseListeners() {
-      //-----------------------------------------------------------------------------
       canvas.addEventListener('mousedown', function(event) {
         childContainsMouseEventPoint(event, function(child, theOffset, theDragStart) {
-          isDragging = true;
-          dragTarget = child;
-          offset = theOffset;
-          dragStart = theDragStart;
+          dragDrop.dragBegin(child, theOffset, theDragStart);
         });
       });
 
       canvas.addEventListener('mousemove', function(event) {
-        if (isDragging) {
-          var dragOffset = new Point(event.clientX - dragStart.x, event.clientY - dragStart.y);
-          var newX = dragTarget.bounds.x + dragOffset.x;
-          var newY = dragTarget.bounds.y + dragOffset.y;
-          var newPoint = new Point(newX, newY);
-          dragTarget.moveTo(graphics, newPoint);
-          dragStart.moveTo(new Point(event.clientX, event.clientY));
+        if (dragDrop.isDragging) {
+          dragDrop.dragMove(event);
           render();
         }
       });
       canvas.addEventListener('mouseup', function(event) {
-        console.log('mouseup: ' + event.clientX + ', ' + event.clientY);
-        isDragging = false;
+        dragDrop.dragEnd();
       });
-      //-----------------------------------------------------------------------------
     }
 
     function childContainsMouseEventPoint(event, callback) {
@@ -119,8 +97,17 @@ var _, EventDispatcher;
     return that;
   };
 
-  // pseudo-static functions look like this:
-  //exports.test = function(arg){return arg;};
+  if (typeof require !== 'undefined') {
+    require('verdoux');
+
+    if (isNotRunningInBrowser()) { 
+      _ = require('underscore');
+      DragDrop = require('./DragDrop.js');
+      EventDispatcher = require('../event/EventDispatcher');
+    }
+  }
+
+  exports.create = function() {return new FullsizeCanvas();};
 
 })(typeof exports === 'undefined'
   ? this.FullsizeCanvas = function(){
