@@ -12,9 +12,7 @@
       get height(){return _height;}
     };
 
-    that.toString = function() {
-      return _width + 'x' + _height;
-    };
+    that.toString = function() {return _width + 'x' + _height;};
 
     return that;
   };
