@@ -1,11 +1,23 @@
 (function(exports){
   'use strict';
 
+  var _
+    , EventDispatcher;
+
+  if (require != null) {
+    require('verdoux');
+
+    if (isNotRunningInBrowser()) { 
+      _ = require('underscore');
+      EventDispatcher = require('../event/EventDispatcher');
+    }
+  }
+
   exports.create = function() { 
     this.prototype = Function.prototype;
     var timerId = null;
-
     var that = EventDispatcher.create();
+
     that.start = function(interval) {
       timerId = setInterval(function() {
         that.emit('pulse');
@@ -16,13 +28,9 @@
       clearInterval(timerId);
     };
 
-    that.addPulseEventListener = function(listener) {
-      that.addEventListener('pulse', listener);
-    };
-
-    that.removePulseEventListener = function(listener) {
-      that.removeEventListener('pulse', listener);
-    };
+    // Couple of convenience functions
+    that.addPulseEventListener = function(listener) {that.addEventListener('pulse', listener);};
+    that.removePulseEventListener = function(listener) {that.removeEventListener('pulse', listener);};
 
     return that;
   };
