@@ -31,6 +31,7 @@
 
     <script type="text/javascript" src="node_modules/verdoux/src/predicates.js"></script>
     <script type="text/javascript" src="lib/underscore.js"></script>
+    <script type="text/javascript" src="src/bagOfTricks.js"></script>
     <script type="text/javascript" src="src/event/EventDispatcher.js"></script>
     <script type="text/javascript" src="src/geometry/Size.js"></script>
     <script type="text/javascript" src="src/geometry/Point.js"></script>
@@ -47,13 +48,68 @@
 
       function initialize() {
         fullsizeCanvas = FullsizeCanvas.create().initialize();
-
-        testGraphics();
-        testEventDispatcher();
-        testPulse();
-        testSize();
         testDragDrop();
+        fullsizeCanvas.refresh();
       }
+
+      function testPulse() {
+        var pulse = new Pulse();
+        pulse.addPulseEventListener(function() {
+          fullsizeCanvas.refresh();
+        });
+
+        var period = 100;
+        var numTimes = 4;
+        pulse.start(period);
+        setTimeout(function() {
+          pulse.stop();
+        }, period * numTimes);
+      }
+
+      function testDragDrop() {
+        var bounds = new Rectangle(150, 50, 300, 300);
+        var fillStyle = '#229977';
+        var box = new Box(bounds, fillStyle);
+
+        fullsizeCanvas.addChild(box);
+        fullsizeCanvas.dragDrop.registerDropTarget(box);
+
+        addDraggableBox();
+      }
+
+      function addDraggableBox() {
+        var bounds = new Rectangle(10,150,100,100);
+        var color = '#774422';
+        var result = colorWithAlpha(color, 0.85);
+        console.log('result: ' + result);
+        
+        var r = parseInt('77', 16);
+        var g = parseInt('44', 16);
+        var b = parseInt('22', 16);
+        var fillStyle = 'rgba(' + r + ',' + g + ',' + b + ', 0.85)';// '#774422';
+        var box = new Box(bounds, fillStyle);
+
+        fullsizeCanvas.addChild(box);
+      }
+
+      function testSize() {
+        var bounds = new Rectangle(25,400,100,100);
+        var size = bounds.size;
+      }
+     </script>
+
+  </head>
+  <body onload='initialize();'>
+    <div><canvas id="canvas"></canvas></div>
+    <div><input type="text" id="editor"/></div>
+  </body>
+</html>
+
+<!-- 
+
+        // testGraphics();
+        // testEventDispatcher();
+        // testSize();
 
       function testGraphics() {
         var canvas = document.getElementById('canvas');
@@ -106,48 +162,5 @@
         emitter.emit('click', 'cluck');
       }
 
-      function testPulse() {
-        var pulse = new Pulse();
-        pulse.addPulseEventListener(function() {
-          fullsizeCanvas.refresh();
-        });
 
-        var period = 100;
-        var numTimes = 4;
-        pulse.start(period);
-        setTimeout(function() {
-          pulse.stop();
-        }, period * numTimes);
-      }
-
-      function testDragDrop() {
-        var bounds = new Rectangle(150, 50, 300, 300);
-        var fillStyle = '#229977';
-        var box = new Box(bounds, fillStyle);
-
-        fullsizeCanvas.addChild(box);
-        fullsizeCanvas.dragDrop.registerDropTarget(box);
-
-        addDraggableBox();
-      }
-
-      function addDraggableBox() {
-        var bounds = new Rectangle(10,150,100,100);
-        var fillStyle = '#774422';
-        var box = new Box(bounds, fillStyle);
-
-        fullsizeCanvas.addChild(box);
-      }
-
-      function testSize() {
-        var bounds = new Rectangle(25,400,100,100);
-        var size = bounds.size;
-      }
-     </script>
-
-  </head>
-  <body onload='initialize();'>
-    <div><canvas id="canvas"></canvas></div>
-    <div><input type="text" id="editor"/></div>
-  </body>
-</html>
+ -->

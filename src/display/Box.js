@@ -53,21 +53,10 @@ var EventDispatcher;
       graphics.context.restore();
     }
 
-    Object.defineProperty(that, 'bounds', {
-      get : function() {return _bounds;},
-      enumerable : true
-    });
-
-    Object.defineProperty(that, 'fillStyle', {
-      get : function() {return fillStyle;},
-      enumerable : true
-    });
-
-    Object.defineProperty(that, 'parent', {
-      get : function() {return _parent;},
-      enumerable : true
-    });
-
+    Object.defineProperty(that, 'bounds', {get : function() {return _bounds;},enumerable : true});
+    Object.defineProperty(that, 'fillStyle', {get : function() {return fillStyle;},enumerable : true});
+    Object.defineProperty(that, 'parent', {get : function() {return _parent;},enumerable : true});
+    
     return that;
   };
 
