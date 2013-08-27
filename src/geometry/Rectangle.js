@@ -17,11 +17,9 @@
       get size(){return new Size(_width, _height);}
     }
 
-    that.moveTo = function(point) {
-      _x = point.x;
-      _y = point.y;
-    };
-
+    that.moveTo = function(point) {that.moveToXY(point.x, point.y);};
+    that.moveToXY = function(x, y) {_x = x; _y = y;}
+    
     that.contains = function(point) {
       var okX = (point.x >= _x && point.x <= _x + _width)
       var okY = (point.y >= that.y && point.y <= _y + _height);
