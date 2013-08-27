@@ -17,15 +17,19 @@ if (typeof module === 'undefined')
     that.addChild = function(child) {
       if (notExisty(child)) throw new Error('child must be existy');
       displayList.push(child);
+      child.emit('addedToParent', that);
       return that;
     };
 
     that.removeChild = function(child) {
       var index = displayList.indexOf(child);
-      if (index >= 0) displayList.splice(index, 1);
+      if (index >= 0) {
+        displayList.splice(index, 1);
+        child.emit('removedFromParent', that);
+      }
     };
 
-    that.refresh = render;
+    that.refresh = function(){render();}
 
     that.initialize = function() {
       canvas = document.getElementById('canvas');
@@ -48,6 +52,7 @@ if (typeof module === 'undefined')
 
     function render() {
       graphics.context.clearRect(0, 0, canvas.width, canvas.height);
+
       displayList.forEach(function(item) {
         item.render(graphics);
       });
@@ -68,7 +73,7 @@ if (typeof module === 'undefined')
       });
 
       canvas.addEventListener('mouseup', function(event) {
-        dragDrop.dragEnd();
+        dragDrop.dragEnd(event);
       });
     }
 

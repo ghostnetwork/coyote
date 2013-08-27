@@ -78,7 +78,16 @@
         lastDropTarget.updateDisplayForAcceptingDrop(false);
     }
 
-    that.dragEnd = function() {_isDragging = false;};
+    that.dragEnd = function(event) {
+      _isDragging = false;
+      isEventPointWithinAnyDropTargets(event, function(dropTarget) {
+        if (existy(dropTarget))
+          dropTarget.acceptDroppedItem(_draggedItem);
+        /*else
+        // TODO: tell the draggedItem to return to its starting position
+          console.log('no drop');*/
+      });
+    };
 
     function isEventPointWithinAnyDropTargets(event, callback) {
       var point = new Point(event.clientX, event.clientY);

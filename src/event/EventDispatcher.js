@@ -1,19 +1,9 @@
 var _, util;
 
 (function(exports){
-
   'use strict';
-
-  if (typeof require !== 'undefined') {
-    require('verdoux');
-
-    if (isNotRunningInBrowser()) { 
-      _ = require('underscore');
-      util = require('util');
-    }
-  }
-
-  exports.create = function() {
+  
+  var EventDispatcher = function() {
     this.prototype = Function.prototype;
     var _listeners = [];
     var that = {};
@@ -32,6 +22,22 @@ var _, util;
       }
     };
 
+    that.on = function(type, listener) {
+      that.addEventListener(type, listener);
+      return that
+    };
+
+    that.once = function(type, listener) {
+      function oneTimeListener() {
+        that.removeEventListener(type, oneTimeListener);
+        listener.apply(that, arguments);
+      };
+
+      oneTimeListener.listener = listener;
+      that.on(type, oneTimeListener);
+      return that
+    };
+
     that.removeEventListener = function(type, listener) {
       if (notExisty(type)) throw new Error('type must be existy');
       if (notExisty(listener)) throw new Error('listener must be existy');
@@ -48,6 +54,11 @@ var _, util;
       });
     };
 
+    that.off = function(type, listener) {
+      that.removeEventListener(type, listener);
+      return that
+    };
+
     that.emit = function(type, payload) {
       var observers = _listeners[type];
       if (!observers) return;
@@ -55,6 +66,7 @@ var _, util;
       observers.forEach(function(item, index) {
         item(payload);
       });
+      return that
     };
 
     that.listeners = function(type) {
@@ -63,9 +75,17 @@ var _, util;
     return that;
   };
 
-  // pseudo-static functions look like this:
-  //exports.test = function(arg){return arg;};
+  if (typeof require !== 'undefined') {
+    require('verdoux');
+
+    if (isNotRunningInBrowser()) { 
+      _ = require('underscore');
+      util = require('util');
+    }
+  }
+
+  exports.create = function() {return new EventDispatcher();};
 
 })(typeof exports === 'undefined'
-? this.EventDispatcher = function(){return EventDispatcher.create()}
-: exports);
+  ? this.EventDispatcher = function(){return EventDispatcher.create()}
+  : exports);

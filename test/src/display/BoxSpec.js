@@ -25,4 +25,30 @@ describe('Box', function(){
   it('should be able to be created', function(){
     assert(existy(box));
   });
+
+  describe('event handling', function(){
+    describe('event: addedToParent', function(){
+      it('should cache the given parent', function(){
+        var expected = 'germa­nium';
+        var parent = {name:expected};
+        box.emit('addedToParent', parent);
+        
+        var name = box.parent.name;
+        assert(existy(name));
+        (name).should.equal(expected);
+      });
+    });
+    
+    describe('event: removedFromParent', function(){
+      it('should clear its parent', function(){
+        var expected = 'rubid­ium';
+        var parent = {name:expected};
+        box.emit('addedToParent', parent);
+        assert(existy(box.parent));
+
+        box.emit('removedFromParent', parent);
+        assert(notExisty(box.parent));
+      });
+    });
+  });
 });

@@ -120,21 +120,23 @@
         }, period * numTimes);
       }
 
-      function addDraggableBox() {
-        var bounds = new Rectangle(10,150,100,100);
-        var fillStyle = '#774422';
-        var box = new Box(bounds, fillStyle);
-        fullsizeCanvas.addChild(box);
-      }
-
       function testDragDrop() {
         var bounds = new Rectangle(150, 50, 300, 300);
         var fillStyle = '#229977';
         var box = new Box(bounds, fillStyle);
+
         fullsizeCanvas.addChild(box);
         fullsizeCanvas.dragDrop.registerDropTarget(box);
 
         addDraggableBox();
+      }
+
+      function addDraggableBox() {
+        var bounds = new Rectangle(10,150,100,100);
+        var fillStyle = '#774422';
+        var box = new Box(bounds, fillStyle);
+
+        fullsizeCanvas.addChild(box);
       }
 
       function testSize() {

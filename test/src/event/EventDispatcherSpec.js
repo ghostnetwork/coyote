@@ -152,4 +152,52 @@ describe('EventDispatcher', function(){
       eventDispatcher.emit(type, payload);
     });
   });
+
+  describe('#on', function(){
+    it('should be able to deliver an event to a subscriber', function(done){
+      var eventName = 'poisoned';
+      var payload = 'arsenic';
+
+      eventDispatcher.on(eventName, function(item) {done();});
+      eventDispatcher.emit(eventName, payload);
+    });
+  });
+
+  describe('#off', function(){
+    it('should not deliver an event to a subscriber', function(done){
+      var eventName = 'flogged';
+      var payload = 'sele­nium';
+      var listener = function(item) {fail('should not have received event');};
+
+      eventDispatcher.on(eventName, listener);
+      eventDispatcher.off(eventName, listener);
+      eventDispatcher.emit(eventName, payload);
+
+      setTimeout(function() {
+        done();
+      }, 1000);
+    });
+  });
+
+  describe('#once', function(){
+    it('should receive the event only once', function(done){
+      var eventName = 'floodedBy';
+      var payloadA = 'bromine';
+      var payloadB = 'kryp­ton';
+      var receivedCounter = 0;
+
+      eventDispatcher.once(eventName, function(item) {
+        receivedCounter++;
+        if (receivedCounter > 1) fail('should not have received event');
+      });
+
+      eventDispatcher.emit(eventName, payloadA);
+      eventDispatcher.emit(eventName, payloadB);
+
+      setTimeout(function() {
+        (receivedCounter).should.equal(1);
+        done();
+      }, 1000);
+    });
+  });
 });
