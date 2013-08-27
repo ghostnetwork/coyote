@@ -30,7 +30,7 @@
     }
 
     that.toString = function() {return _x + ', ' + _y + ', ' + _width + ', ' + _height};
-
+    
     return that;
   };
   

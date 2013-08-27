@@ -13,10 +13,8 @@
       get y(){return _y;}
     };
 
-    that.moveTo = function(point) {
-      _x = point.x;
-      _y = point.y;
-    };
+    that.moveToXY = function(x, y) {_x = x; _y = y;};
+    that.moveTo = function(point) {that.moveToXY(point.x, point.y);};
 
     that.toString = function() {return x + ', ' + y;};
     
