@@ -32,4 +32,34 @@ describe('DragDrop', function(){
     });
     */
   });
+
+  describe('#registerDropTarget', function(){
+    it('should return false if dropTarget is notExisty', function(){
+      var dropTarget;
+      var result = dragDrop.registerDropTarget(dropTarget);
+      assert(falsey(result));
+    });
+
+    it('should be able to add a dropTarget', function(){
+      var dropTarget = {"name":'zinc'};
+      var result = dragDrop.registerDropTarget(dropTarget);
+      assert(result);
+      var expected = 1;
+      (dragDrop.dropTargetCount).should.equal(expected);
+    });
+  });
+
+  describe('#unregisterDropTarget', function(){
+    it('should return false if dropTarget is notExisty', function(){
+      var dropTarget;
+      var result = dragDrop.unregisterDropTarget(dropTarget);
+      assert(falsey(result));
+    });
+
+    it('should return false if dropTarget was not first registered', function(){
+      var dropTarget = {"name":'gallium'};
+      var result = dragDrop.unregisterDropTarget(dropTarget);
+      assert(falsey(result));
+    });
+  });
 });

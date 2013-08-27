@@ -7,6 +7,7 @@
 
     var _bounds = bounds;
     var _fillStyle = fillStyle;
+    var _borderColor = 'black';
 
     var that = { 
       get bounds(){return _bounds;},
@@ -23,19 +24,24 @@
 
     that.render = function(graphics) {
       graphics.context.save();
-      graphics.drawFilledRect(_bounds, _fillStyle);
-      graphics.context.restore();
-
-      graphics.context.save();
+      clearDisplay(graphics);
       drawBorder(graphics);
       graphics.context.restore();
       return that;
     };
 
+    //-----------------------------------------------------------------------------
+    that.dropTargetWillAcceptDrop = function(draggedItem) {return existy(draggedItem);};
+    that.updateDisplayForAcceptingDrop = function(accepts) {updateBorderColorForDrop(accepts)};
+    //-----------------------------------------------------------------------------
+
+    function updateBorderColorForDrop(accepts) {_borderColor = accepts ? 'yellow' : 'black';}
+    function clearDisplay(graphics) {graphics.drawFilledRect(_bounds, _fillStyle);}
+
     function drawBorder(graphics) {
       graphics.context.save();
       graphics.context.lineWidth = 3;
-      graphics.context.strokeStyle = 'black';
+      graphics.context.strokeStyle = _borderColor;
       var pad = 0;
       graphics.context.strokeRect(_bounds.x+pad, _bounds.y+pad, _bounds.width-pad*2, _bounds.height-pad*2);
       graphics.context.restore();

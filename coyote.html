@@ -30,6 +30,7 @@
     </style>
 
     <script type="text/javascript" src="node_modules/verdoux/src/predicates.js"></script>
+    <script type="text/javascript" src="lib/underscore.js"></script>
     <script type="text/javascript" src="src/event/EventDispatcher.js"></script>
     <script type="text/javascript" src="src/geometry/Size.js"></script>
     <script type="text/javascript" src="src/geometry/Point.js"></script>
@@ -45,14 +46,13 @@
       var graphics;
 
       function initialize() {
-        // fullsizeCanvas = FullsizeCanvas.create().initialize(testFullSizeCanvasDrawing);
         fullsizeCanvas = FullsizeCanvas.create().initialize();
 
         testGraphics();
         testEventDispatcher();
         testPulse();
-        testBox();
         testSize();
+        testDragDrop();
       }
 
       function testGraphics() {
@@ -99,7 +99,7 @@
 
       function testEventDispatcher() {
         var emitter = new EventDispatcher();
-        var listener = function(event) {console.log('event: ' + event);};
+        var listener = function(event) {return('event: ' + event);};
         emitter.addEventListener('click', listener);
         emitter.emit('click', 'cluck');
         emitter.removeEventListener('click', listener);
@@ -120,18 +120,26 @@
         }, period * numTimes);
       }
 
-      function testBox() {
-        // var bounds = new Rectangle(25,100,100,100);
-        var bounds = new Rectangle(10,50,100,100);
+      function addDraggableBox() {
+        var bounds = new Rectangle(10,150,100,100);
         var fillStyle = '#774422';
         var box = new Box(bounds, fillStyle);
         fullsizeCanvas.addChild(box);
       }
 
+      function testDragDrop() {
+        var bounds = new Rectangle(150, 50, 300, 300);
+        var fillStyle = '#229977';
+        var box = new Box(bounds, fillStyle);
+        fullsizeCanvas.addChild(box);
+        fullsizeCanvas.dragDrop.registerDropTarget(box);
+
+        addDraggableBox();
+      }
+
       function testSize() {
         var bounds = new Rectangle(25,400,100,100);
         var size = bounds.size;
-        console.log('size: ' + size);
       }
      </script>
 

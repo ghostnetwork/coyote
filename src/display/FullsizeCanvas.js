@@ -21,7 +21,6 @@ if (typeof module === 'undefined')
     };
 
     that.removeChild = function(child) {
-      // if (notExisty(child)) throw new Error('child must be existy');
       var index = displayList.indexOf(child);
       if (index >= 0) displayList.splice(index, 1);
     };
@@ -38,7 +37,7 @@ if (typeof module === 'undefined')
       window.addEventListener('resize', resizeCanvas, false);
       resizeCanvas();
 
-      return that; // provides chaining
+      return that;
     }
 
     function resizeCanvas() {
@@ -56,7 +55,7 @@ if (typeof module === 'undefined')
 
     function configureMouseListeners() {
       canvas.addEventListener('mousedown', function(event) {
-        childContainsMouseEventPoint(event, function(child, theOffset, theDragStart) {
+        isEventPointWithinAnyChildren(event, function(child, theOffset, theDragStart) {
           dragDrop.dragBegin(child, theOffset, theDragStart);
         });
       });
@@ -67,12 +66,13 @@ if (typeof module === 'undefined')
           render();
         }
       });
+
       canvas.addEventListener('mouseup', function(event) {
         dragDrop.dragEnd();
       });
     }
 
-    function childContainsMouseEventPoint(event, callback) {
+    function isEventPointWithinAnyChildren(event, callback) {
       var point = new Point(event.clientX, event.clientY);
 
       displayList.forEach(function(item) {
@@ -84,6 +84,8 @@ if (typeof module === 'undefined')
       });
     }
 
+    function isDraggedItem(child) {return child !== dragDrop.draggedItem;}
+
     Object.defineProperty(that, 'graphics', {
       get : function() {return graphics;},
       enumerable : true
@@ -91,6 +93,11 @@ if (typeof module === 'undefined')
 
     Object.defineProperty(that, 'childCount', {
       get : function() {return displayList.length;},
+      enumerable : true
+    });
+
+    Object.defineProperty(that, 'dragDrop', {
+      get : function() {return dragDrop;},
       enumerable : true
     });
 

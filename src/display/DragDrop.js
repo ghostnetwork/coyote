@@ -8,12 +8,32 @@
     var _draggedItem 
       , dragEventPointOffset
       , dragStartPoint
-      , _isDragging = false;
+      , dropTargets = []
+      , _isDragging = false
+      , lastDropTarget;
 
     var that = { 
       get draggedItem(){return _draggedItem;},
       get isDragging(){return _isDragging;}
     };
+
+    that.registerDropTarget = function(dropTarget) {
+      if (notExisty(dropTarget)) return false;
+      dropTargets.push(dropTarget);
+      return true;
+    };
+
+    that.unregisterDropTarget = function(dropTarget) {
+      if (notExisty(dropTarget)) return false;
+
+      var index = dropTargets.indexOf(dropTarget);
+      if (index >= 0){
+        dropTargets.slice(index, 1);
+        return true;
+      }
+
+      return false;
+    }
 
     that.dragBegin = function(dragTarget, eventPointOffset, startPoint) {
       if (notExisty(dragTarget) || notExisty(eventPointOffset) || notExisty(startPoint))
@@ -30,13 +50,57 @@
       var newX = _draggedItem.bounds.x + dragOffset.x;
       var newY = _draggedItem.bounds.y + dragOffset.y;
       var newPoint = new Point(newX, newY);
+
       _draggedItem.moveTo(graphics, newPoint);
       dragStartPoint.moveTo(new Point(event.clientX, event.clientY));
+
+      checkForDropTarget(event);
     };
 
-    that.dragEnd = function() {
-      _isDragging = false;
-    };
+    function checkForDropTarget(event) {
+      isEventPointWithinAnyDropTargets(event, function(dropTarget) {
+        if (existy(dropTarget))
+          checkIfDropTargetWillAcceptDrop(dropTarget);
+        else
+          lastDropTargetClearDrop();
+      });
+    }
+
+    function checkIfDropTargetWillAcceptDrop(dropTarget) {
+      var willAccept = dropTarget.dropTargetWillAcceptDrop(_draggedItem);
+      if (willAccept) {
+        dropTarget.updateDisplayForAcceptingDrop(true);
+      }
+    }
+
+    function lastDropTargetClearDrop() {
+      if (existy(lastDropTarget))
+        lastDropTarget.updateDisplayForAcceptingDrop(false);
+    }
+
+    that.dragEnd = function() {_isDragging = false;};
+
+    function isEventPointWithinAnyDropTargets(event, callback) {
+      var point = new Point(event.clientX, event.clientY);
+      var foundDropTarget = false;
+
+      dropTargets.forEach(function(dropTarget) {
+        if (dropTarget.bounds.contains(point)) {
+          foundDropTarget = true;
+          lastDropTarget = dropTarget;
+          callback(dropTarget);
+        }
+      });
+
+      if (not(foundDropTarget)) {
+        callback();
+      }
+    }
+
+    Object.defineProperty(that, 'dropTargetCount', {
+      get : function() {return dropTargets.length;},
+      enumerable : true
+    });
 
     return that;
   };
