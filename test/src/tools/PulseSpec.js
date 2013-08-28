@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require('assert');
-var Pulse = require('../../../src/tools/pulse');
+var Pulse = require('../../../src/tools/Pulse');
 
 describe('Pulse', function(){
   var pulse;

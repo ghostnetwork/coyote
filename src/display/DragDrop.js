@@ -81,6 +81,7 @@
     that.dragEnd = function(event) {
       _isDragging = false;
       isEventPointWithinAnyDropTargets(event, function(dropTarget) {
+
         if (existy(dropTarget))
           dropTarget.acceptDroppedItem(_draggedItem);
         /*else

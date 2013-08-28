@@ -37,6 +37,7 @@
     <script type="text/javascript" src="src/geometry/Point.js"></script>
     <script type="text/javascript" src="src/geometry/Rectangle.js"></script>
     <script type="text/javascript" src="src/tools/Pulse.js"></script>
+    <script type="text/javascript" src="src/display/Displayable.js"></script>
     <script type="text/javascript" src="src/display/DragDrop.js"></script>
     <script type="text/javascript" src="src/display/Graphics.js"></script>
     <script type="text/javascript" src="src/display/FullsizeCanvas.js"></script>
@@ -70,6 +71,7 @@
         var bounds = new Rectangle(150, 50, 300, 300);
         var fillStyle = '#229977';
         var box = new Box(bounds, fillStyle);
+        box['name'] = 'big.box';
 
         fullsizeCanvas.addChild(box);
         fullsizeCanvas.dragDrop.registerDropTarget(box);
@@ -80,14 +82,10 @@
       function addDraggableBox() {
         var bounds = new Rectangle(10,150,100,100);
         var color = '#774422';
-        var result = colorWithAlpha(color, 0.85);
-        console.log('result: ' + result);
+        var fillStyle = colorWithAlpha(color, 0.85);
         
-        var r = parseInt('77', 16);
-        var g = parseInt('44', 16);
-        var b = parseInt('22', 16);
-        var fillStyle = 'rgba(' + r + ',' + g + ',' + b + ', 0.85)';// '#774422';
         var box = new Box(bounds, fillStyle);
+        box['name'] = 'draggable.box';
 
         fullsizeCanvas.addChild(box);
       }

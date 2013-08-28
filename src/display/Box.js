@@ -1,25 +1,15 @@
-var EventDispatcher;
+var _, Displayable;
 
 (function(exports){
   'use strict';
 
-  exports.create = function(bounds, fillStyle) { 
+  // exports.create = function(bounds, fillStyle) { 
+  var Box = function(bounds, fillStyle) {
     this.prototype = Function.prototype;
-    var that = EventDispatcher.create();
+    var that = Displayable.create(bounds);
 
     var _borderColor = 'black'
-      , _bounds = bounds
-      , _fillStyle = fillStyle
-      , _parent;
-
-    that.on('addedToParent', function(parent) {_parent = parent;});
-    that.on('removedFromParent', function(parent) {_parent = null;});
-
-    that.moveTo = function(graphics, point, doRender) {
-      _bounds.moveTo(point);
-      if ((existy(doRender) && doRender)) that.render(graphics);
-      return that;
-    };
+      , _fillStyle = fillStyle;
 
     that.render = function(graphics) {
       graphics.context.save();
@@ -29,33 +19,24 @@ var EventDispatcher;
       return that;
     };
 
-    //-----------------------------------------------------------------------------
-    that.dropTargetWillAcceptDrop = function(draggedItem) {return existy(draggedItem);};
     that.updateDisplayForAcceptingDrop = function(accepts) {updateBorderColorForDrop(accepts)};
-    that.acceptDroppedItem = function(droppedItem) {
-      if (otherBoxIsMe(droppedItem)) return;
-      var droppedItemParent = droppedItem.parent;
-      droppedItem.parent.removeChild(droppedItem);
-      droppedItemParent.refresh();
-    };
-    //-----------------------------------------------------------------------------
-
-    function otherBoxIsMe(otherItem) {return (otherItem === that);}
     function updateBorderColorForDrop(accepts) {_borderColor = accepts ? 'yellow' : 'black';}
-    function clearDisplay(graphics) {graphics.drawFilledRect(_bounds, _fillStyle);}
+    function clearDisplay(graphics) {graphics.drawFilledRect(that.bounds, _fillStyle);}
 
     function drawBorder(graphics) {
       graphics.context.save();
       graphics.context.lineWidth = 3;
       graphics.context.strokeStyle = _borderColor;
-      var pad = 0;
-      graphics.context.strokeRect(_bounds.x+pad, _bounds.y+pad, _bounds.width-pad*2, _bounds.height-pad*2);
+      var pad = 0
+        , x = that.bounds.x + pad
+        , y = that.bounds.y + pad
+        , width = that.bounds.width - (pad * 2)
+        , height = that.bounds.height - (pad * 2);
+      graphics.context.strokeRect(x, y, width, height);
       graphics.context.restore();
     }
 
-    Object.defineProperty(that, 'bounds', {get : function() {return _bounds;},enumerable : true});
     Object.defineProperty(that, 'fillStyle', {get : function() {return fillStyle;},enumerable : true});
-    Object.defineProperty(that, 'parent', {get : function() {return _parent;},enumerable : true});
     
     return that;
   };
@@ -64,13 +45,12 @@ var EventDispatcher;
     require('verdoux');
 
     if (isNotRunningInBrowser()) { 
-      EventDispatcher = require('../event/EventDispatcher');
+      _ = require('underscore');
+      Displayable = require('./Displayable');
     }
   }
   
-  // pseudo-static functions look like this:
-  //exports.test = function(arg){return arg;};
-
+  exports.create = function(bounds, fillStyle){return new Box(bounds, fillStyle);};
 })(typeof exports === 'undefined'
   ? this.Box = function(bounds, fillStyle){return Box.create(bounds, fillStyle)}
   : exports);
