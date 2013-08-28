@@ -2,7 +2,7 @@
 (function(exports){
   'use strict';
 
-  exports.create = function(x,y,width,height) { 
+  var Rectangle = function(x,y,width,height) { 
     this.prototype = Function.prototype;
     var _x = x
       , _y = y
@@ -31,9 +31,9 @@
     
     return that;
   };
-  
-  // pseudo-static functions look like this:
-  exports.test = function(arg){return arg;};
+
+  exports.create = function(x, y, width, height) {return new Rectangle(x, y, width, height);};
+  exports.Empty = exports.create(0, 0, 0, 0);
 
 })(typeof exports === 'undefined'
   ? this.Rectangle = function(x,y,width,height){return Rectangle.create(x,y,width,height)}

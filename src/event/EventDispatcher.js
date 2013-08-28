@@ -76,8 +76,6 @@ var _, util;
   };
 
   if (typeof require !== 'undefined') {
-    require('verdoux');
-
     if (isNotRunningInBrowser()) { 
       _ = require('underscore');
       util = require('util');

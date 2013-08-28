@@ -97,4 +97,14 @@ describe('Rectangle', function(){
       assert(result);
     });
   });
+
+  describe('Empty', function(){
+    it('should provide an Empty rectangle', function(){
+      assert(existy(Rectangle.Empty));
+      (Rectangle.Empty.x).should.equal(0);
+      (Rectangle.Empty.y).should.equal(0);
+      (Rectangle.Empty.width).should.equal(0);
+      (Rectangle.Empty.height).should.equal(0);
+    });
+  });
 });

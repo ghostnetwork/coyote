@@ -1,4 +1,4 @@
-var _, Displayable;
+var _, Displayable, Rectangle;
 
 if (typeof module === 'undefined')
   var module = {"exports":{}};
@@ -8,8 +8,7 @@ if (typeof module === 'undefined')
 
   var FullsizeCanvas = function() {
     this.prototype = Function.prototype;
-    var that = Displayable.create();
-    that['name'] = 'FullsizeCanvas';
+    var that = Displayable.create('FullsizeCanvas', Rectangle.Empty);
 
     if (typeof document !== 'undefined') initialize();
 
@@ -23,6 +22,8 @@ if (typeof module === 'undefined')
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      console.log('canvas: ' + canvas.width + 'x' + canvas.height);
+      that.emit('resized', Rectangle.create(0, 0, canvas.width, canvas.height));
       that.refresh();
     }
     
@@ -30,11 +31,10 @@ if (typeof module === 'undefined')
   };
 
   if (typeof require !== 'undefined') {
-    require('verdoux');
-
     if (isNotRunningInBrowser()) { 
       _ = require('underscore');
       Displayable = require('./Displayable.js');
+      Rectangle = require('../geometry/Rectangle.js');
     }
   }
 

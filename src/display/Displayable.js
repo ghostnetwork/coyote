@@ -1,4 +1,4 @@
-var _, DragDrop, EventDispatcher;
+var _, DragDrop, EventDispatcher, Rectangle;
 
 if (typeof module === 'undefined')
   var module = {"exports":{}};
@@ -6,23 +6,26 @@ if (typeof module === 'undefined')
 (function(exports){
   'use strict';
 
-  var Displayable = function(bounds) { 
+  var Displayable = function(name, bounds) { 
     this.prototype = Function.prototype;
     var that = EventDispatcher.create()
-      , _bounds = bounds
-      , canvas
+      , _bounds = bounds || Rectangle.create(0, 0, 0, 0)
+      , _canvas
       , displayList = []
       , dragDrop = DragDrop.create()
       , graphics
+      , _name = name
       , _parent;
 
     that.on('addedToParent', function(parent) {_parent = parent;});
     that.on('removedFromParent', function(parent) {_parent = null;});
+    that.on('resized', function(b){_bounds = b;});
 
     that.initialize = function() {
       if (typeof document !== 'undefined') {
-        canvas = document.getElementById('canvas');
-        graphics = new Graphics(canvas);
+        console.log(_name + ' --> initialize');
+        _canvas = document.getElementById('xcanvas');
+        graphics = new Graphics(_canvas);
         configureMouseListeners();
       }
       return that;
@@ -70,26 +73,27 @@ if (typeof module === 'undefined')
       if (mouseListenersConfigured) {return;}
       mouseListenersConfigured = true;
 
-      canvas.addEventListener('mousedown', function(event) {
+      _canvas.addEventListener('mousedown', function(event) {
         isEventPointWithinAnyChildren(event, function(child, theOffset, theDragStart) {
           dragDrop.dragBegin(child, theOffset, theDragStart);
         });
       });
 
-      canvas.addEventListener('mousemove', function(event) {
+      _canvas.addEventListener('mousemove', function(event) {
         if (dragDrop.isDragging) {
           dragDrop.dragMove(event);
           render();
         }
       });
 
-      canvas.addEventListener('mouseup', function(event) {
+      _canvas.addEventListener('mouseup', function(event) {
         dragDrop.dragEnd(event);
       });
     }
 
     function render() {
-      graphics.context.clearRect(0, 0, canvas.width, canvas.height);
+      
+      graphics.context.clearRect(0, 0, _canvas.width, _canvas.height);
 
       displayList.forEach(function(item) {
         item.render(graphics);
@@ -115,22 +119,22 @@ if (typeof module === 'undefined')
     Object.defineProperty(that, 'dragDrop', {get : function() {return dragDrop;},enumerable : true});
     Object.defineProperty(that, 'bounds', {get : function() {return _bounds;},enumerable : true});
     Object.defineProperty(that, 'parent', {get : function() {return _parent;},enumerable : true});
+    Object.defineProperty(that, 'name', {get : function() {return _name;},enumerable : true});
 
     return that;
   };
 
   if (typeof require !== 'undefined') {
-    require('verdoux');
-
     if (isNotRunningInBrowser()) { 
       _ = require('underscore');
       DragDrop = require('./DragDrop.js');
       EventDispatcher = require('../event/EventDispatcher');
+      Rectangle = require('../geometry/Rectangle');
     }
   }
   
-  exports.create = function(bounds){return new Displayable(bounds);};
+  exports.create = function(name, bounds){return new Displayable(name, bounds);};
 
 })(typeof exports === 'undefined'
-  ? this.Displayable = function(bounds){return Displayable.create(bounds)}
+  ? this.Displayable = function(name, bounds){return Displayable.create(name, bounds)}
   : exports);

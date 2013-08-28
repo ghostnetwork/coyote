@@ -70,8 +70,7 @@
       function testDragDrop() {
         var bounds = new Rectangle(150, 50, 300, 300);
         var fillStyle = '#229977';
-        var box = new Box(bounds, fillStyle);
-        box['name'] = 'big.box';
+        var box = new Box('big.box', bounds, fillStyle);
 
         fullsizeCanvas.addChild(box);
         fullsizeCanvas.dragDrop.registerDropTarget(box);
@@ -83,9 +82,7 @@
         var bounds = new Rectangle(10,150,100,100);
         var color = '#774422';
         var fillStyle = colorWithAlpha(color, 0.85);
-        
-        var box = new Box(bounds, fillStyle);
-        box['name'] = 'draggable.box';
+        var box = new Box('draggable.box', bounds, fillStyle);
 
         fullsizeCanvas.addChild(box);
       }

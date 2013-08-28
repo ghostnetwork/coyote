@@ -3,10 +3,9 @@ var _, Displayable;
 (function(exports){
   'use strict';
 
-  // exports.create = function(bounds, fillStyle) { 
-  var Box = function(bounds, fillStyle) {
+  var Box = function(name, bounds, fillStyle) {
     this.prototype = Function.prototype;
-    var that = Displayable.create(bounds);
+    var that = Displayable.create(name, bounds);
 
     var _borderColor = 'black'
       , _fillStyle = fillStyle;
@@ -42,15 +41,13 @@ var _, Displayable;
   };
 
   if (typeof require !== 'undefined') {
-    require('verdoux');
-
     if (isNotRunningInBrowser()) { 
       _ = require('underscore');
       Displayable = require('./Displayable');
     }
   }
   
-  exports.create = function(bounds, fillStyle){return new Box(bounds, fillStyle);};
+  exports.create = function(name, bounds, fillStyle){return new Box(name, bounds, fillStyle);};
 })(typeof exports === 'undefined'
-  ? this.Box = function(bounds, fillStyle){return Box.create(bounds, fillStyle)}
+  ? this.Box = function(name, bounds, fillStyle){return Box.create(name, bounds, fillStyle)}
   : exports);
