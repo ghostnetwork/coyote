@@ -39,6 +39,8 @@
       if (notExisty(dragTarget) || notExisty(eventPointOffset) || notExisty(startPoint))
         throw new TypeError('insufficient parameters for dragBegin');
 
+      dragTarget.emit('dragBegin', startPoint);
+      
       _draggedItem = dragTarget;
       dragEventPointOffset = eventPointOffset;
       dragStartPoint = startPoint;
@@ -87,6 +89,8 @@
         /*else
         // TODO: tell the draggedItem to return to its starting position
           console.log('no drop');*/
+      
+      _draggedItem.emit('dragEnd');
       });
     };
 

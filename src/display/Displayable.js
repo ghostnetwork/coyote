@@ -110,7 +110,6 @@ if (typeof module === 'undefined')
 
       exports.canvas.addEventListener('mousedown', function(event) {
         isEventPointWithinAnyChildren(event, function(child, theOffset, theDragStart) {
-
           dragDrop.dragBegin(child, theOffset, theDragStart);
         });
       });
