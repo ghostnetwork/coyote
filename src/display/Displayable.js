@@ -147,31 +147,40 @@ if (typeof module === 'undefined')
     }
 
     // that.isEventPointWithinAnyChildren = isEventPointWithinAnyChildren;
-    that.foo = function(event, callback) {
+    that.checkChildrenForHit = function(event, callback) {
       return isEventPointWithinAnyChildren(event, callback);
     };
 
     function isEventPointWithinAnyChildren(event, callback) {
       var wasFound = false;
       var point = new Point(event.clientX, event.clientY);
+
+      // console.log(that.name + ' checking');
+
       displayList.forEach(function(item) {
         if (item.childCount > 0) {
-          var result = item.foo(event, callback);
-          if (result) {
-            return true;
-          }
+          // console.log(item.name + ' isa container');
+
+          wasFound = item.checkChildrenForHit(event, callback);
+          // console.log(item.name + ' wasFound: ' + wasFound);
         }
 
-        if (item.bounds.contains(point)) {
-          var theOffset = new Point(point.x - item.bounds.x, point.y - item.bounds.y);
-          var theDragStart = new Point(event.clientX, event.clientY);
-          callback(item, theOffset, theDragStart);
-          wasFound = true;
-        } 
-        else {
-          wasFound = false;
+        if (not(wasFound)) {
+          if (item.bounds.contains(point)) {
+            var theOffset = new Point(point.x - item.bounds.x, point.y - item.bounds.y);
+            var theDragStart = new Point(event.clientX, event.clientY);
+            callback(item, theOffset, theDragStart);
+            // console.log(item.name + ' was hit');
+            wasFound = true;
+          } 
+          else {
+            // console.log(item.name + ' NOT hit');
+            wasFound = false;
+          }
         }
       });
+
+      // console.log(that.name + ' --> wasFound: ' + wasFound);
       return wasFound;
     }
 
