@@ -22,7 +22,6 @@ if (typeof module === 'undefined')
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      console.log('canvas: ' + canvas.width + 'x' + canvas.height);
       that.emit('resized', Rectangle.create(0, 0, canvas.width, canvas.height));
       that.refresh();
     }

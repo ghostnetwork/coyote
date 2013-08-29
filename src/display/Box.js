@@ -8,23 +8,15 @@ var _, Displayable;
     var that = Displayable.create(name, bounds);
 
     var _borderColor = 'black'
-      , _fillStyle = fillStyle;
+      , _fillStyle = fillStyle
+      , _hasBorder = true; // TODO: temporary; lose this
 
-    that.render = function(graphics) {
+    that.clearDisplay = function(graphics) {graphics.drawFilledRect(that.bounds, _fillStyle);}
+    that.drawBorder = function(graphics) {
+      if (not(_hasBorder)) return;
+
       graphics.context.save();
-      clearDisplay(graphics);
-      drawBorder(graphics);
-      graphics.context.restore();
-      return that;
-    };
-
-    that.updateDisplayForAcceptingDrop = function(accepts) {updateBorderColorForDrop(accepts)};
-    function updateBorderColorForDrop(accepts) {_borderColor = accepts ? 'yellow' : 'black';}
-    function clearDisplay(graphics) {graphics.drawFilledRect(that.bounds, _fillStyle);}
-
-    function drawBorder(graphics) {
-      graphics.context.save();
-      graphics.context.lineWidth = 3;
+      graphics.context.lineWidth = 2;
       graphics.context.strokeStyle = _borderColor;
       var pad = 0
         , x = that.bounds.x + pad
@@ -35,7 +27,16 @@ var _, Displayable;
       graphics.context.restore();
     }
 
+    that.updateDisplayForAcceptingDrop = function(accepts) {updateBorderColorForDrop(accepts)};
+    function updateBorderColorForDrop(accepts) {_borderColor = accepts ? 'yellow' : 'black';}
+
     Object.defineProperty(that, 'fillStyle', {get : function() {return fillStyle;},enumerable : true});
+    Object.defineProperty(that, 'hasBorder', {
+      get : function() {return _hasBorder;},
+      set : function(hb){ _hasBorder = hb; },
+      enumerable : true,
+      configurable : true
+    });
     
     return that;
   };

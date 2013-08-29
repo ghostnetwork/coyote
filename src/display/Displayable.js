@@ -10,22 +10,23 @@ if (typeof module === 'undefined')
     this.prototype = Function.prototype;
     var that = EventDispatcher.create()
       , _bounds = bounds || Rectangle.create(0, 0, 0, 0)
-      , _canvas
       , displayList = []
       , dragDrop = DragDrop.create()
-      , graphics
       , _name = name
       , _parent;
 
     that.on('addedToParent', function(parent) {_parent = parent;});
     that.on('removedFromParent', function(parent) {_parent = null;});
-    that.on('resized', function(b){_bounds = b;});
+    that.on('resized', function(b){that.onResized(b);});
+
+    that.onResized = function(newBounds) {_bounds = newBounds;};
 
     that.initialize = function() {
       if (typeof document !== 'undefined') {
-        console.log(_name + ' --> initialize');
-        _canvas = document.getElementById('xcanvas');
-        graphics = new Graphics(_canvas);
+        if (notExisty(exports.canvas)) {
+          exports.canvas = document.getElementById('canvas');;
+          exports.graphics = new Graphics(exports.canvas);
+        }
         configureMouseListeners();
       }
       return that;
@@ -46,11 +47,25 @@ if (typeof module === 'undefined')
       }
     };
 
-    that.refresh = function(){render();}
+    that.refresh = function(){
+      eraseScreen();
+      renderChildren();
+      that.render(exports.graphics);
+    };
+
+    that.render = function(graphics) {
+      graphics.context.save();
+      that.clearDisplay(graphics);
+      that.drawBorder(graphics);
+      graphics.context.restore();
+      return that;
+    };
+    that.clearDisplay = function(graphics) {};
+    that.drawBorder = function(graphics) {};
 
     that.moveTo = function(graphics, point, doRender) {
       that.bounds.moveTo(point);
-      if ((existy(doRender) && doRender)) that.render(graphics);
+      if ((existy(doRender) && doRender)) that.render();
       return that;
     };
 
@@ -73,32 +88,35 @@ if (typeof module === 'undefined')
       if (mouseListenersConfigured) {return;}
       mouseListenersConfigured = true;
 
-      _canvas.addEventListener('mousedown', function(event) {
+      exports.canvas.addEventListener('mousedown', function(event) {
         isEventPointWithinAnyChildren(event, function(child, theOffset, theDragStart) {
           dragDrop.dragBegin(child, theOffset, theDragStart);
         });
       });
 
-      _canvas.addEventListener('mousemove', function(event) {
+      exports.canvas.addEventListener('mousemove', function(event) {
         if (dragDrop.isDragging) {
           dragDrop.dragMove(event);
-          render();
+          eraseScreen();
+          renderChildren();
         }
       });
 
-      _canvas.addEventListener('mouseup', function(event) {
+      exports.canvas.addEventListener('mouseup', function(event) {
         dragDrop.dragEnd(event);
       });
     }
 
-    function render() {
-      
-      graphics.context.clearRect(0, 0, _canvas.width, _canvas.height);
+    function eraseScreen() {
+      // exports.graphics.context.clearRect(0, 0, exports.canvas.width, exports.canvas.height);
+      exports.graphics.context.clearRect(0, 0, _bounds.width, _bounds.height);
+    }
 
+    function renderChildren() {
       displayList.forEach(function(item) {
-        item.render(graphics);
+        item.render(exports.graphics);
       });
-    };
+    }
 
     function isEventPointWithinAnyChildren(event, callback) {
       var point = new Point(event.clientX, event.clientY);
@@ -117,12 +135,20 @@ if (typeof module === 'undefined')
     Object.defineProperty(that, 'graphics', {get : function() {return graphics;},enumerable : true});
     Object.defineProperty(that, 'childCount', {get : function() {return displayList.length;},enumerable : true});
     Object.defineProperty(that, 'dragDrop', {get : function() {return dragDrop;},enumerable : true});
-    Object.defineProperty(that, 'bounds', {get : function() {return _bounds;},enumerable : true});
     Object.defineProperty(that, 'parent', {get : function() {return _parent;},enumerable : true});
     Object.defineProperty(that, 'name', {get : function() {return _name;},enumerable : true});
+    Object.defineProperty(that, 'bounds', {
+      get : function(){ return _bounds; },
+      set : function(b){ _bounds = b; },
+      enumerable : true,
+      configurable : true
+    });
 
     return that;
   };
+
+  exports.canvas = null;
+  exports.graphics = null;
 
   if (typeof require !== 'undefined') {
     if (isNotRunningInBrowser()) { 
