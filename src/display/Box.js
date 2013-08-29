@@ -12,20 +12,20 @@ var _, Displayable;
       , _fillStyle = fillStyle
       , _hasBorder = true; // TODO: temporary; lose this
 
-    that.clearDisplay = function(graphics) {graphics.drawFilledRect(that.bounds, _fillStyle);}
-    that.drawBorder = function(graphics) {
+    that.clearDisplay = function() {that.graphics.drawFilledRect(that.bounds, _fillStyle);}
+    that.drawBorder = function() {
       if (not(_hasBorder)) return;
 
-      graphics.context.save();
-      graphics.context.lineWidth = 2;
-      graphics.context.strokeStyle = _borderColor;
+      that.graphics.context.save();
+      that.graphics.context.lineWidth = 2;
+      that.graphics.context.strokeStyle = _borderColor;
       var pad = 0
         , x = that.bounds.x + pad
         , y = that.bounds.y + pad
         , width = that.bounds.width - (pad * 2)
         , height = that.bounds.height - (pad * 2);
-      graphics.context.strokeRect(x, y, width, height);
-      graphics.context.restore();
+      that.graphics.context.strokeRect(x, y, width, height);
+      that.graphics.context.restore();
     }
 
     that.updateDisplayForAcceptingDrop = function(accepts) {updateBorderColorForDrop(accepts)};

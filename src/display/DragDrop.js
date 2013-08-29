@@ -51,7 +51,7 @@
       var newY = _draggedItem.bounds.y + dragOffset.y;
       var newPoint = new Point(newX, newY);
 
-      _draggedItem.moveTo(graphics, newPoint);
+      _draggedItem.moveTo(newPoint);
       dragStartPoint.moveTo(new Point(event.clientX, event.clientY));
 
       checkForDropTarget(event);

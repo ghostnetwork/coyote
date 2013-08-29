@@ -3,8 +3,6 @@ var assert = require('assert');
 var should = require('should');
 var sinon = require('sinon');
 var util = require('util');
-
-// var Displayable = require('../../../src/display/Displayable');
 var FixedWidthBox = require('../../../src/display/FixedWidthBox');
 var Rectangle = require('../../../src/geometry/Rectangle');
 

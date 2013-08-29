@@ -20,9 +20,15 @@ if (typeof module === 'undefined')
 
     that.on('addedToParent', function(parent) {_parent = parent;});
     that.on('removedFromParent', function(parent) {_parent = null;});
-    that.on('resized', function(b){that.onResized(b);});
+    that.on('resized', function(bounds){that.onResized(bounds);});
+    that.on('movedTo', function(info){that.onMovedTo(info);});
 
     that.onResized = function(newBounds) {_bounds = newBounds;};
+    that.onMovedTo = function(info) {
+      var newPoint = info.point;
+      var delta = info.delta;
+      updateChildrenLocations(delta);
+    };
 
     that.initialize = function() {
       if (typeof document !== 'undefined') {
@@ -52,23 +58,31 @@ if (typeof module === 'undefined')
 
     that.refresh = function(){
       eraseScreen();
-      renderChildren();
+      // renderChildren();
       that.render(exports.graphics);
     };
 
-    that.render = function(graphics) {
-      graphics.context.save();
-      that.clearDisplay(graphics);
-      that.drawBorder(graphics);
-      graphics.context.restore();
+    that.render = function() {
+      exports.graphics.context.save();
+      that.clearDisplay();
+      that.drawBorder();
+      exports.graphics.context.restore();
+      renderChildren();
       return that;
     };
-    that.clearDisplay = function(graphics) {};
-    that.drawBorder = function(graphics) {};
+    that.clearDisplay = function() {};
+    that.drawBorder = function() {};
 
-    that.moveTo = function(graphics, point, doRender) {
+    that.moveTo = function(point, doRender) {
+      var deltaX = point.x - that.bounds.x;
+      var deltaY = point.y - that.bounds.y;
+      var delta = Point.create(deltaX, deltaY);
+
       that.bounds.moveTo(point);
       if ((existy(doRender) && doRender)) that.render();
+      
+      that.emit('movedTo', {point:point, delta:delta});
+
       return that;
     };
 
@@ -121,6 +135,16 @@ if (typeof module === 'undefined')
       });
     }
 
+    function updateChildrenLocations (delta) {
+      displayList.forEach(function(child) {
+        var childBounds = child.bounds;
+        var x = childBounds.x + delta.x;
+        var y = childBounds.y + delta.y;
+        var newPoint = Point.create(x, y);
+        child.moveTo(newPoint, true);
+      })
+    }
+
     function isEventPointWithinAnyChildren(event, callback) {
       var point = new Point(event.clientX, event.clientY);
 
@@ -135,7 +159,7 @@ if (typeof module === 'undefined')
 
     function isDraggedItem(child) {return child !== dragDrop.draggedItem;}
 
-    Object.defineProperty(that, 'graphics', {get : function() {return graphics;},enumerable : true});
+    Object.defineProperty(that, 'graphics', {get : function() {return exports.graphics;},enumerable : true});
     Object.defineProperty(that, 'childCount', {get : function() {return displayList.length;},enumerable : true});
     Object.defineProperty(that, 'dragDrop', {get : function() {return dragDrop;},enumerable : true});
     Object.defineProperty(that, 'parent', {get : function() {return _parent;},enumerable : true});
