@@ -107,6 +107,7 @@ if (typeof module === 'undefined')
 
       exports.canvas.addEventListener('mousedown', function(event) {
         isEventPointWithinAnyChildren(event, function(child, theOffset, theDragStart) {
+
           dragDrop.dragBegin(child, theOffset, theDragStart);
         });
       });
@@ -145,16 +146,33 @@ if (typeof module === 'undefined')
       })
     }
 
-    function isEventPointWithinAnyChildren(event, callback) {
-      var point = new Point(event.clientX, event.clientY);
+    // that.isEventPointWithinAnyChildren = isEventPointWithinAnyChildren;
+    that.foo = function(event, callback) {
+      return isEventPointWithinAnyChildren(event, callback);
+    };
 
+    function isEventPointWithinAnyChildren(event, callback) {
+      var wasFound = false;
+      var point = new Point(event.clientX, event.clientY);
       displayList.forEach(function(item) {
+        if (item.childCount > 0) {
+          var result = item.foo(event, callback);
+          if (result) {
+            return true;
+          }
+        }
+
         if (item.bounds.contains(point)) {
           var theOffset = new Point(point.x - item.bounds.x, point.y - item.bounds.y);
           var theDragStart = new Point(event.clientX, event.clientY);
           callback(item, theOffset, theDragStart);
+          wasFound = true;
+        } 
+        else {
+          wasFound = false;
         }
       });
+      return wasFound;
     }
 
     function isDraggedItem(child) {return child !== dragDrop.draggedItem;}
