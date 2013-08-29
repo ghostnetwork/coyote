@@ -5,12 +5,7 @@ var _, Box, Rectangle;
 
   var FixedWidthBox = function(spec) { 
     this.prototype = Function.prototype;
-    
-    var name = existy(spec) && existy(spec.name) ? spec.name : undefined;
-    var bounds = existy(spec) && existy(spec.bounds) ? spec.bounds : undefined;
-    var fillStyle = existy(spec) && existy(spec.fillStyle) ? spec.fillStyle : undefined;
-    
-    var that = Box.create(name, bounds, fillStyle);
+    var that = Box.create(spec);
 
     that.onResized = function(b) {
       that.bounds = Rectangle.create(b.x, b.y, that.bounds.width, b.height);

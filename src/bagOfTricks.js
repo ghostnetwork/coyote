@@ -1,5 +1,5 @@
 
-function colorWithAlpha(color, alpha) {
+colorWithAlpha = function(color, alpha) {
   // Assumes color has format of '#RRGGBB'
   var red = parseInt(color.substring(1, 3), 16);
   var green = parseInt(color.substring(3, 5), 16);

@@ -3,9 +3,10 @@ var _, Displayable;
 (function(exports){
   'use strict';
 
-  var Box = function(name, bounds, fillStyle) {
+  var Box = function(spec) {
     this.prototype = Function.prototype;
-    var that = Displayable.create(name, bounds);
+    var fillStyle = existy(spec) && existy(spec.fillStyle) ? spec.fillStyle : undefined;
+    var that = Displayable.create(spec);
 
     var _borderColor = 'black'
       , _fillStyle = fillStyle
@@ -48,7 +49,7 @@ var _, Displayable;
     }
   }
   
-  exports.create = function(name, bounds, fillStyle){return new Box(name, bounds, fillStyle);};
+  exports.create = function(spec){return new Box(spec);};
 })(typeof exports === 'undefined'
-  ? this.Box = function(name, bounds, fillStyle){return Box.create(name, bounds, fillStyle)}
+  ? this.Box = function(spec){return Box.create(spec)}
   : exports);

@@ -8,7 +8,7 @@ if (typeof module === 'undefined')
 
   var FullsizeCanvas = function() {
     this.prototype = Function.prototype;
-    var that = Displayable.create('FullsizeCanvas', Rectangle.Empty);
+    var that = Displayable.create({name:'FullsizeCanvas', bounds:Rectangle.Empty});
 
     if (typeof document !== 'undefined') initialize();
 

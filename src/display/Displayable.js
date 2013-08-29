@@ -6,8 +6,11 @@ if (typeof module === 'undefined')
 (function(exports){
   'use strict';
 
-  var Displayable = function(name, bounds) { 
+  var Displayable = function(spec) { 
     this.prototype = Function.prototype;
+    var name = existy(spec) && existy(spec.name) ? spec.name : undefined;
+    var bounds = existy(spec) && existy(spec.bounds) ? spec.bounds : undefined;
+
     var that = EventDispatcher.create()
       , _bounds = bounds || Rectangle.create(0, 0, 0, 0)
       , displayList = []
@@ -159,8 +162,8 @@ if (typeof module === 'undefined')
     }
   }
   
-  exports.create = function(name, bounds){return new Displayable(name, bounds);};
+  exports.create = function(spec){return new Displayable(spec);};
 
 })(typeof exports === 'undefined'
-  ? this.Displayable = function(name, bounds){return Displayable.create(name, bounds)}
+  ? this.Displayable = function(spec){return Displayable.create(spec)}
   : exports);
