@@ -15,6 +15,7 @@ if (typeof module === 'undefined')
       , _bounds = bounds || Rectangle.create(0, 0, 0, 0)
       , displayList = []
       , dragDrop = DragDrop.create()
+      , _fixedPosition = false
       , _name = name
       , _parent;
 
@@ -74,6 +75,8 @@ if (typeof module === 'undefined')
     that.drawBorder = function() {};
 
     that.moveTo = function(point, doRender) {
+      if (_fixedPosition) return;
+
       var deltaX = point.x - that.bounds.x;
       var deltaY = point.y - that.bounds.y;
       var delta = Point.create(deltaX, deltaY);
@@ -194,6 +197,12 @@ if (typeof module === 'undefined')
     Object.defineProperty(that, 'bounds', {
       get : function(){ return _bounds; },
       set : function(b){ _bounds = b; },
+      enumerable : true,
+      configurable : true
+    });
+    Object.defineProperty(that, 'fixedPosition', {
+      get : function(){ return _fixedPosition; },
+      set : function(b){ _fixedPosition = b; },
       enumerable : true,
       configurable : true
     });
