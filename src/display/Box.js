@@ -75,7 +75,7 @@ var _, Displayable;
           _borderStyle = cachedBorderStyle;
           cachedBorderStyle = undefined;
         }
-        color = _borderStyle.color;
+        color = existy(_borderStyle) ? _borderStyle.color : 'black';
       }
       changeBorderStyle('color', color);
     }
