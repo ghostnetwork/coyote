@@ -14,6 +14,12 @@ if (typeof module === 'undefined')
 
     function initialize() {
       that.initialize();
+
+      that.on('postRender', function(graphics) {
+        var style = {font:'24px Courier', color:'black'};
+        graphics.drawText('coyote', Point.create(10, 20), style);
+      });
+
       // resize the canvas to fill browser window dynamically
       window.addEventListener('resize', resizeCanvas, false);
       resizeCanvas();

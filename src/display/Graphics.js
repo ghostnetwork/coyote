@@ -27,6 +27,14 @@
       _context.strokeRect(rect.x, rect.y, rect.width, rect.height);
     };
 
+    that.drawText = function(what, where, style) {
+      if (existy(style)) {
+        if (existy(style.color)) {_context.fillStyle = style.color;};
+        if (existy(style.font)) {_context.font = style.font;};
+      }
+      _context.fillText(what, where.x, where.y);
+    }
+
     function pushFillStyle(fillStyle) {
       origFillStyle = _context.fillStyle;
       _context.fillStyle = fillStyle;

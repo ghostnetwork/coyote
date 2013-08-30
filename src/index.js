@@ -10,7 +10,6 @@ function initialize() {
   testHierarchicalBoxes();
   testFixedPositionBox();
 
-  fullsizeCanvas.graphics.drawText('olleh', Point.create(50,70));
   fullsizeCanvas.refresh();
 }
 
@@ -41,6 +40,7 @@ function testDragDrop() {
   var style = {width:3, color:'#ffaaff'};
   var box = Box.create(spec)
               .borderStyle(style)
+              .drawName(true, {font:'11px courier', color:'#0f0'})
               .on('accptedDrop', function(droppedItem) {
                 fullsizeCanvas.refresh();
               });
@@ -56,7 +56,10 @@ function addDraggableBox() {
   var color = '#774422';
   var fillStyle = colorWithAlpha(color, 0.85);
   var spec = {name:'draggable.box', bounds:bounds, fillStyle:fillStyle};
-  var box = Box.create(spec);
+  var box = Box.create(spec)
+              .on('dragEnd', function(dropTarget) {
+                console.log(box.name + ' got dropped on ' + dropTarget.name);
+              });
 
   fullsizeCanvas.addChild(box);
 }

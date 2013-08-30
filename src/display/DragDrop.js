@@ -86,7 +86,9 @@
         /*else
         // TODO: tell the draggedItem to return to its starting position
           console.log('no drop');*/
-        if (existy(_draggedItem)) _draggedItem.emit('dragEnd');
+        if (existy(_draggedItem)) {
+          _draggedItem.emit('dragEnd', dropTarget);
+        }
       });
     };
 

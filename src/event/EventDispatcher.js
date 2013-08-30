@@ -61,7 +61,7 @@ var _, util;
 
     that.emit = function(type, payload) {
       var observers = _listeners[type];
-      if (!observers) return;
+      if (!observers) {return;}
 
       observers.forEach(function(item, index) {
         item(payload);

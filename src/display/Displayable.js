@@ -46,6 +46,7 @@ if (typeof module === 'undefined')
       updateChildrenLocations(delta);
     };
 
+    // TODO: should move this into FullsizeCanvas; it's the 'Stage' after all
     that.initialize = function() {
       if (typeof document !== 'undefined') {
         if (notExisty(exports.canvas)) {
@@ -74,16 +75,20 @@ if (typeof module === 'undefined')
 
     that.refresh = function(){
       eraseScreen();
-      // renderChildren();
       that.render(exports.graphics);
     };
 
     that.render = function() {
       exports.graphics.context.save();
+      that.emit('preRender', exports.graphics);
+
       that.clearDisplay();
       that.drawBorder();
-      exports.graphics.context.restore();
       renderChildren();
+
+      exports.graphics.context.restore();
+      that.emit('postRender', exports.graphics);
+
       return that;
     };
     that.clearDisplay = function() {};

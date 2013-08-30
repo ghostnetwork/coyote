@@ -11,8 +11,11 @@ var _, Displayable;
     var _borderColor = 'black'
       , _borderStyle
       , cachedBorderStyle
+      , _drawName
+      , _drawNameStyle
       , _fillStyle = fillStyle
       , _hasBorder = true // TODO: temporary; lose this;
+      ;
 
     that.noBorder = function(){_hasBorder = false; return that;};
     that.borderStyle = function(style){_borderStyle = style; return that;};
@@ -77,7 +80,23 @@ var _, Displayable;
       changeBorderStyle('color', color);
     }
 
+    that.drawName = function(shouldDrawName, drawNameStyle) {
+      _drawName = shouldDrawName;
+      _drawNameStyle = drawNameStyle;
+      if (notExisty(_drawNameStyle))
+        _drawNameStyle = {font:'12px Courier'};
+      return that;
+    };
+
     that.on('accptedDrop', function(draggedItem) {cachedBorderStyle = undefined;});
+    that.on('postRender', function(graphics) {
+      if (_drawName) {
+        var x = that.bounds.x + 10
+          , y = that.bounds.y + 18
+          , point = Point.create(x, y);
+        graphics.drawText(that.name, point, _drawNameStyle);
+      }
+    });
 
     Object.defineProperty(that, 'fillStyle', {get : function() {return fillStyle;},enumerable : true});
     Object.defineProperty(that, 'hasBorder', {
