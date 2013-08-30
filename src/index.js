@@ -3,10 +3,21 @@ var graphics;
 
 function initialize() {
   fullsizeCanvas = FullsizeCanvas.create().initialize();
+
+  testEval('wookie');
+
   testDragDrop();
   testHierarchicalBoxes();
   testFixedPositionBox();
+
+  fullsizeCanvas.graphics.drawText('olleh', Point.create(50,70));
   fullsizeCanvas.refresh();
+}
+
+function testEval(name) {
+  var source = "(function(){return '" + name + "';}());";
+  var thing = eval(source);
+  // console.log('thing: ' + thing);
 }
 
 function testPulse() {
