@@ -39,12 +39,12 @@
       if (notExisty(dragTarget) || notExisty(eventPointOffset) || notExisty(startPoint))
         throw new TypeError('insufficient parameters for dragBegin');
 
-      dragTarget.emit('dragBegin', startPoint);
-      
       _draggedItem = dragTarget;
       dragEventPointOffset = eventPointOffset;
       dragStartPoint = startPoint;
       _isDragging = true;
+
+      dragTarget.emit('dragBegin', _draggedItem, startPoint);
     };
 
     that.dragMove = function(event) {
@@ -70,9 +70,7 @@
 
     function checkIfDropTargetWillAcceptDrop(dropTarget) {
       var willAccept = dropTarget.dropTargetWillAcceptDrop(_draggedItem);
-      if (willAccept) {
-        dropTarget.updateDisplayForAcceptingDrop(true);
-      }
+      dropTarget.updateDisplayForAcceptingDrop(willAccept);
     }
 
     function lastDropTargetClearDrop() {
@@ -83,14 +81,12 @@
     that.dragEnd = function(event) {
       _isDragging = false;
       isEventPointWithinAnyDropTargets(event, function(dropTarget) {
-
         if (existy(dropTarget))
           dropTarget.acceptDroppedItem(_draggedItem);
         /*else
         // TODO: tell the draggedItem to return to its starting position
           console.log('no drop');*/
-      
-      _draggedItem.emit('dragEnd');
+        if (existy(_draggedItem)) _draggedItem.emit('dragEnd');
       });
     };
 

@@ -15,6 +15,7 @@ if (typeof module === 'undefined')
       , _bounds = bounds || Rectangle.create(0, 0, 0, 0)
       , displayList = []
       , dragDrop = DragDrop.create()
+      , dragItemOrigIndex
       , _fixedPosition = false
       , _name = name
       , _parent;
@@ -23,6 +24,20 @@ if (typeof module === 'undefined')
     that.on('removedFromParent', function(parent) {_parent = null;});
     that.on('resized', function(bounds){that.onResized(bounds);});
     that.on('movedTo', function(info){that.onMovedTo(info);});
+
+    /* TODO: 
+    thinking about a way to elevate the dragged item to topmost in the
+    displayList. doesn't work here because more often than not the draggedItem
+    isn't in this container's displayList.
+
+    need a master displayList, which should likely be FullsizeCanvas (it 
+    sort of fills the role of 'Stage' as found in other frameworks).
+    */
+    // that.on('dragBegin', function(draggedItem, startPoint) {
+    //   console.log('--> container dragBegin: ' + startPoint);
+    //   dragItemOrigIndex = displayList.indexOf(draggedItem);
+    //   console.log('dragItemOrigIndex: ' + dragItemOrigIndex);
+    // });
 
     that.onResized = function(newBounds) {_bounds = newBounds;};
     that.onMovedTo = function(info) {
@@ -90,7 +105,10 @@ if (typeof module === 'undefined')
     };
 
     //-----------------------------------------------------------------------------
-    that.dropTargetWillAcceptDrop = function(draggedItem) {return existy(draggedItem);};
+    that.dropTargetWillAcceptDrop = function(draggedItem) {
+      if (otherBoxIsMe(draggedItem)) return false;
+      return existy(draggedItem);
+    };
     that.updateDisplayForAcceptingDrop = function(accepts) {};
     that.acceptDroppedItem = function(droppedItem) {
       if (otherBoxIsMe(droppedItem)) return;
@@ -98,6 +116,8 @@ if (typeof module === 'undefined')
       var droppedItemParent = droppedItem.parent;
       droppedItemParent.removeChild(droppedItem);
       droppedItemParent.refresh();
+
+      that.emit('accptedDrop', droppedItem);
     };
     //-----------------------------------------------------------------------------
 

@@ -9,27 +9,75 @@ var _, Displayable;
     var that = Displayable.create(spec);
 
     var _borderColor = 'black'
+      , _borderStyle
+      , cachedBorderStyle
       , _fillStyle = fillStyle
-      , _hasBorder = true; // TODO: temporary; lose this
+      , _hasBorder = true // TODO: temporary; lose this;
+
+    that.noBorder = function(){_hasBorder = false; return that;};
+    that.borderStyle = function(style){_borderStyle = style; return that;};
 
     that.clearDisplay = function() {that.graphics.drawFilledRect(that.bounds, _fillStyle);}
     that.drawBorder = function() {
       if (not(_hasBorder)) return;
 
       that.graphics.context.save();
-      that.graphics.context.lineWidth = 2;
-      that.graphics.context.strokeStyle = _borderColor;
+      that.graphics.context.strokeStyle = getBorderColor();
+      that.graphics.context.lineWidth = getBorderWidth();
+
       var pad = 0
         , x = that.bounds.x + pad
         , y = that.bounds.y + pad
         , width = that.bounds.width - (pad * 2)
         , height = that.bounds.height - (pad * 2);
+
       that.graphics.context.strokeRect(x, y, width, height);
       that.graphics.context.restore();
     }
 
+    function getBorderColor() {
+      return (existy(_borderStyle) && existy(_borderStyle.color)) ? _borderStyle.color : 'black';
+    }
+
+    function getBorderWidth() {
+      return (existy(_borderStyle) && existy(_borderStyle.width)) ? _borderStyle.width : 2;
+    }
+
+    function changeBorderStyle(key, value) {
+      if (notExisty(_borderStyle)) {
+        _borderStyle = {};
+      }
+      _borderStyle[key] = value;
+    }
+
+    function saveBorderStyle() {
+      cachedBorderStyle = _borderStyle;
+      if (notExisty(cachedBorderStyle))
+        cachedBorderStyle = {color:'black', width:2};
+      else
+        cachedBorderStyle = {color:_borderStyle.color, width:_borderStyle.width};
+    }
+
     that.updateDisplayForAcceptingDrop = function(accepts) {updateBorderColorForDrop(accepts)};
-    function updateBorderColorForDrop(accepts) {_borderColor = accepts ? 'yellow' : 'black';}
+    function updateBorderColorForDrop(accepts) {
+      var color = 'black';
+      if (accepts) {
+        if (notExisty(cachedBorderStyle)) {
+          saveBorderStyle();
+        }
+        color = 'yellow';
+      }
+      else {
+        if (existy(cachedBorderStyle)) {
+          _borderStyle = cachedBorderStyle;
+          cachedBorderStyle = undefined;
+        }
+        color = _borderStyle.color;
+      }
+      changeBorderStyle('color', color);
+    }
+
+    that.on('accptedDrop', function(draggedItem) {cachedBorderStyle = undefined;});
 
     Object.defineProperty(that, 'fillStyle', {get : function() {return fillStyle;},enumerable : true});
     Object.defineProperty(that, 'hasBorder', {
